@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edita Producte</title>
+    <link rel="stylesheet" href="/nou_css.css">
+</head>
+<body>
+    <header>
+        <h1>Editar Producte: <%= product.name %></h1>
+    </header>
+    
+    <main>
+        <form action="/products/<%= product.id %>?_method=PUT" method="POST">
+            <label for="name">Nom:</label>
+            <input type="text" id="name" name="name" value="<%= product.name %>" required>
+            
+            <label for="category">Categoria:</label>
+            <input type="text" id="category" name="category" value="<%= product.category %>" required>
+
+            <label for="price">Preu (€):</label>
+            <input type="number" id="price" name="price" value="<%= product.price %>" step="0.01" required>
+
+            <button type="submit">Desar Canvis</button>
+        </form>
+        <a href="/products">Tornar al llistat</a>
+    </main>
+</body>
+</html>

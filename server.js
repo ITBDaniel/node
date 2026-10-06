@@ -16,25 +16,18 @@ app.use(methodOverride('_method'));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-const getCurrentUser = (req) => {
-    const token = req.cookies?.token;
-    if (!token) return null;
 
-    try {
-        return jwt.verify(token, SECRET_JWT_KEY);
-    } catch (error) {
-        return null;
+app.use((req,res,next)=>{
+    const token =req.cookies.access_token
+    req.session={user: null}
+    try{
+        const data=jwt.verify(token,SECRET_JWT_KEY)
+        req.session.user=data
+    }catch(error){
+        req.session.user=null
     }
-};
-
-const setAuthCookie = (res, username) => {
-    const token = jwt.sign({ username }, SECRET_JWT_KEY, { expiresIn: '1h' });
-    res.cookie('token', token, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: false,
-    });
-};
+    next() // seguir a la siguiente ruta o middleware.
+})
 
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
@@ -48,43 +41,61 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        const user = await UserRepository.login({ username, password });
-        setAuthCookie(res, user.username);
-        res.status(200).json({ username: user.username });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
+app.post('/login', async (req,res)=>{
+    try{
+        const {username,password}=req.body
+        console.log("llego aqui")
+        const user = await UserRepository.login({username,password})
+        console.log("llego aqui 1")
+        const token = jwt.sign(
+            {id: user._id, username: user.username},
+            SECRET_JWT_KEY, 
+            {
+            expiresIn:'1h'
+            })
+            console.log("llego aqui 2")
+        res
+        .cookie('access_token',token,{
+            httpOnly:true, //la cookie solo se puede acceder en el servidor, no podrem fer un document.cookie
+            //secure:true, //la cookie solo funciona en https
+            secure: process.env.NODE_ENV==='production',
+            sameSite:'strict', //la cookie es pot accedir dins del domini
+            maxAge:1000*60*60 //la cookie te un temps de validesa d'una hora
+        })
+        .send({ user,token })
+    }catch (error){
+        //401 = no autorització
+        res.status(401).send(error.message)
     }
 });
 
-app.post('/logout', (req, res) => {
-    res.clearCookie('token');
-    res.status(200).json({ ok: true });
+app.post('/logout',(req,res)=>{
+    res
+    .clearCookie('access_token')
+    .json({message:'logout successfull'})
+    .send('logout');
 });
 
 app.get('/protected', (req, res) => {
-    const user = getCurrentUser(req);
-
-    if (!user) {
-        return res.redirect('/');
+    const user = req.session.user;
+    if (user) {
+        return res.render('register', { username: user.username });
     }
-
-    return res.render('register', { username: user.username });
+    res.status(403).send("No estas autorizado")
 });
 
 app.get('/', (req, res) => {
-    const user = getCurrentUser(req);
+    const user = req.session.user;
+    console.log('ROOT_ROUTE', user);
 
     if (user) {
         return res.render('register', { username: user.username });
     }
 
-    return res.render('register', {});
+    res.render('register', {});
 });
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
