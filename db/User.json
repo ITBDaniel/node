@@ -1,1 +1,32 @@
-[{"_id":"9452c5f4-34dd-4beb-88d2-85fa36499c12","username":"Daniel1234","password":"$2b$10$gIrXSIZ0mVMUyKMHeORYK.WlpLE9n9nFurFFzPUi/B8s4HDel49by"}]
+[
+  {
+    "_id": "b9506034-812e-4c42-82ad-02ac4af4eee8",
+    "username": "tester_1791467108477",
+    "password": "$2b$10$1Buo1vsab/H9leqmv6YB6OH9JLeJYjlwgt3ssiCf.gA9KUDPTpdPu"
+  },
+  {
+    "_id": "961f3547-035f-4184-8253-c7df65d1c275",
+    "username": "pepito123",
+    "password": "$2b$10$dBUVWEMYvYqSpI0qMFIPo.x4/ZBjI0BchtXk0FJ0PfVYo1KtEjIWC"
+  },
+  {
+    "_id": "a63c0ebd-1a1c-4ff1-b7ce-1e62707e0ef0",
+    "username": "tester_1791466635127",
+    "password": "$2b$10$xYFnJvZ6Y2IOs5x2AkeCFOtaClJjHwGHP6rFffbKWo5uOOyzU.Qna"
+  },
+  {
+    "_id": "932151e8-4f17-4cae-a397-d221663333f0",
+    "username": "tester_1791466623320",
+    "password": "$2b$10$4E6fG6/Fvap8YVrtih3NE.jBGZiKSUPAoqvgkYfEzPqFMBP0KFcIC"
+  },
+  {
+    "_id": "65e8c4cd-76d8-4344-8d59-d25ada29719b",
+    "username": "tester",
+    "password": "$2b$10$8C.p5hBNctZqrlGH1doqAO7dMDcJb5VWVwYAtmZ1jO0.6DfK7/b0W"
+  },
+  {
+    "_id": "9452c5f4-34dd-4beb-88d2-85fa36499c12",
+    "username": "Daniel1234",
+    "password": "$2b$10$gIrXSIZ0mVMUyKMHeORYK.WlpLE9n9nFurFFzPUi/B8s4HDel49by"
+  }
+]

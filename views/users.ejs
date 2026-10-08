@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Usuaris</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <h1>Usuaris</h1>
+        <a href="/protected">Tornar</a>
+      </header>
+
+      <main class="card">
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert error"><%= error %></div>
+        <% } %>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach((userItem) => { %>
+              <tr>
+                <td><%= userItem._id %></td>
+                <td><%= userItem.username %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </main>
+    </div>
+  </body>
+</html>

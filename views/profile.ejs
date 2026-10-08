@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <h1>Perfil de l'usuari</h1>
+        <a href="/protected">Tornar</a>
+      </header>
+
+      <main class="card">
+        <p><strong>ID:</strong> <%= user.id %></p>
+        <p><strong>Nom d'usuari:</strong> <%= user.username %></p>
+
+        <% if (bookings && bookings.length) { %>
+          <h3>Reserves registrades</h3>
+          <ul>
+            <% bookings.forEach((booking) => { %>
+              <li><%= booking.bookingDate %> · <%= booking.startTime %> - <%= booking.endTime %> · <%= booking.status %></li>
+            <% }) %>
+          </ul>
+        <% } else { %>
+          <p>No hi ha reserves associades a aquest usuari.</p>
+        <% } %>
+      </main>
+    </div>
+  </body>
+</html>

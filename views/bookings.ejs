@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reserves</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <h1>Reserves</h1>
+        <a href="/protected">Tornar</a>
+      </header>
+
+      <main class="grid-layout">
+        <section class="card">
+          <h2>Nova reserva</h2>
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert error"><%= error %></div>
+          <% } %>
+
+          <form action="/bookings" method="POST">
+            <label for="productId">Producte</label>
+            <select id="productId" name="productId" required>
+              <% products.forEach((product) => { %>
+                <option value="<%= product._id %>"><%= product.name %></option>
+              <% }) %>
+            </select>
+
+            <label for="bookingDate">Data</label>
+            <input id="bookingDate" name="bookingDate" type="date" required />
+
+            <label for="startTime">Hora d'inici</label>
+            <input id="startTime" name="startTime" type="time" required />
+
+            <label for="endTime">Hora de fi</label>
+            <input id="endTime" name="endTime" type="time" required />
+
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" rows="3"></textarea>
+
+            <button type="submit">Reservar</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Llistat de reserves</h2>
+          <% if (bookings && bookings.length) { %>
+            <table>
+              <thead>
+                <tr>
+                  <th>Usuari</th>
+                  <th>Data</th>
+                  <th>Hora</th>
+                  <th>Estat</th>
+                  <th>Accions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% bookings.forEach((booking) => { %>
+                  <tr>
+                    <td><%= booking.userName %></td>
+                    <td><%= booking.bookingDate %></td>
+                    <td><%= booking.startTime %> - <%= booking.endTime %></td>
+                    <td><%= booking.status %></td>
+                    <td class="actions">
+                      <a href="/bookings/<%= booking._id %>/edit">Editar</a>
+                      <form action="/bookings/<%= booking._id %>?_method=DELETE" method="POST">
+                        <button type="submit" class="danger">Eliminar</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p>No hi ha reserves.</p>
+          <% } %>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "eec947a4-3ce7-4eea-82b7-20a0e5ce2b2e",
+    "productId": "88fcecf6-98dd-49c6-ad6a-98e391fc890a",
+    "userId": "b9506034-812e-4c42-82ad-02ac4af4eee8",
+    "userName": "tester_1791467108477",
+    "bookingDate": "2026-10-20",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "status": "confirmed",
+    "notes": "Testing",
+    "createdAt": "2026-10-08T13:45:08.704Z"
+  },
+  {
+    "_id": "80de1cdd-1556-4bd3-9682-afd93a28d229",
+    "productId": "6241c710-b3d4-4d82-8cd7-aaaa9b8018b9",
+    "userId": "961f3547-035f-4184-8253-c7df65d1c275",
+    "userName": "pepito123",
+    "bookingDate": "2026-10-08",
+    "startTime": "03:40",
+    "endTime": "09:40",
+    "status": "confirmed",
+    "notes": "",
+    "createdAt": "2026-10-08T13:40:52.237Z"
+  },
+  {
+    "_id": "d1bc7630-9701-4a02-bfd8-feeeb494abe1",
+    "productId": "fad11e12-17d0-4cf7-92de-738f52df2d82",
+    "userId": "a63c0ebd-1a1c-4ff1-b7ce-1e62707e0ef0",
+    "userName": "tester_1791466635127",
+    "bookingDate": "2026-10-20",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "status": "confirmed",
+    "notes": "Testing",
+    "createdAt": "2026-10-08T13:37:15.357Z"
+  },
+  {
+    "_id": "356cfc70-bf67-46bc-a94f-938a3b133f6a",
+    "productId": "e10fe330-3646-467c-8c90-d9a15b273005",
+    "userId": "65e8c4cd-76d8-4344-8d59-d25ada29719b",
+    "userName": "tester",
+    "bookingDate": "2026-10-20",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "status": "confirmed",
+    "notes": "Testing",
+    "createdAt": "2026-10-08T13:36:36.818Z"
+  }
+]

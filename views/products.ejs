@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Productes</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <h1>Gestió de productes</h1>
+        <a href="/protected">Tornar</a>
+      </header>
+
+      <main class="grid-layout">
+        <section class="card">
+          <h2>Nou producte</h2>
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert error"><%= error %></div>
+          <% } %>
+
+          <form action="/products" method="POST">
+            <label for="name">Nom</label>
+            <input id="name" name="name" type="text" required />
+
+            <label for="category">Categoria</label>
+            <input id="category" name="category" type="text" required />
+
+            <label for="price">Preu</label>
+            <input id="price" name="price" type="number" min="0" step="0.01" required />
+
+            <label for="stock">Stock</label>
+            <input id="stock" name="stock" type="number" min="0" required />
+
+            <label for="description">Descripció</label>
+            <textarea id="description" name="description" rows="3"></textarea>
+
+            <button type="submit">Crear</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Llistat</h2>
+          <% if (products && products.length) { %>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Categoria</th>
+                  <th>Preu</th>
+                  <th>Stock</th>
+                  <th>Accions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% products.forEach((product) => { %>
+                  <tr>
+                    <td><%= product.name %></td>
+                    <td><%= product.category %></td>
+                    <td><%= product.price %> €</td>
+                    <td><%= product.stock %></td>
+                    <td class="actions">
+                      <a href="/products/<%= product._id %>/edit">Editar</a>
+                      <form action="/products/<%= product._id %>?_method=DELETE" method="POST">
+                        <button type="submit" class="danger">Eliminar</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p>No hi ha productes disponibles.</p>
+          <% } %>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,4 +1,5 @@
  const $ = el => document.querySelector(el);
+        // Selecciona los formularios y mensajes del frontend
         const loginForm = $('#login-form')
         const loginSpan = $('#login-form span')
 
@@ -7,7 +8,7 @@
 
         const logoutButton = $('#close-session')
 
-
+        // Handle user login
         loginForm?.addEventListener('submit', e => {
             e.preventDefault()
             const username = $('#login-username').value
@@ -34,12 +35,14 @@
                 })
         });
 
+        // Handle new user registration
         registerForm?.addEventListener('submit', e => {
             e.preventDefault()
             const username = $('#register-username').value
             const password = $('#register-password').value
             const confirmPassword = $('#register-confirm-password').value
 
+            // Validate password confirmation
             if (password != confirmPassword) {
                 alert('Passwords do not match')
                 return
@@ -67,6 +70,7 @@
                 })
         });
 
+        // Logout current user and redirect to home
         logoutButton?.addEventListener('click', e => {
             e.preventDefault()
             fetch('/logout', {

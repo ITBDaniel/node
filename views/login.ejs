@@ -1,142 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login and registration</title>
-    <link rel="stylesheet" type="text/css" href="/login.css">
-</head>
-
-<body>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inici de sessió</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
     <div class="container">
-        <% if (typeof username!='undefined' ) { %>
-            <div class="form-container">
-                <h2>Hola <%=username%>!</h2>
-                <p>Estas en el panel de admin</p>
-                <button id="close-session">Cerrar sesión</button>
-                <a href="/protected">Seguir administrando</a>
-            </div>
+      <div class="form-container">
+        <h2>Inici de sessió</h2>
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert error"><%= error %></div>
         <% } %>
 
-        <% if (typeof username==='undefined' ) { %>
-            <div class="form-container">
-                <form id="login-form">
-                    <h2>Login</h2>
-                    <label for="login-username">Username:</label>
-                    <input type="text" id="login-username" name="username" required>
+        <form action="/login" method="POST">
+          <label for="username">Nom d'usuari</label>
+          <input id="username" name="username" type="text" required />
 
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" required>
+          <label for="password">Contrasenya</label>
+          <input id="password" name="password" type="password" required />
 
-                    <button type="submit">Login</button>
-                    <span>&nbsp;</span>
-                </form>
-            </div>
+          <button type="submit">Entrar</button>
+        </form>
 
-            <div class="form-container">
-                <form id="register-form">
-                    <h2>Register</h2>
-                    <label for="register-username">Username:</label>
-                    <input type="text" id="register-username" name="username" required>
-
-                    <label for="register-password">Password</label>
-                    <input type="password" id="register-password" name="password" required>
-
-                    <label for="register-confirm-password">Password</label>
-                    <input type="password" id="register-confirm-password" name="confirm-password" required>
-
-                    <button type="submit">Register</button>
-                    <span>&nbsp;</span>
-                </form>
-            </div>
-            <% } %>
+        <p>Encara no tens compte? <a href="/register">Registra't</a></p>
+      </div>
     </div>
-
-    <script>
-        const $ = el => document.querySelector(el);
-        const loginForm = $('#login-form')
-        const loginSpan = $('#login-form span')
-
-        const registerForm = $('#register-form')
-        const registerSpan = $('#register-form span')
-
-        const logoutButton = $('#close-session')
-
-
-        loginForm?.addEventListener('submit', e => {
-            e.preventDefault()
-            const username = $('#login-username').value
-            const password = $('#login-password').value
-
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            })
-                .then(res => {
-                    if (res.ok) {
-                        loginSpan.innerText = 'Session iniciada ..Entrando..'
-                        loginSpan.style.color = 'green'
-                        setTimeout(() => {
-                            window.location.href = '/protected'
-                        }, 2000)
-                    } else {
-                        loginSpan.innerText = 'Error al iniciar session'
-                        loginSpan.style.color = 'red'
-                    }
-                })
-        });
-
-        registerForm?.addEventListener('submit', e => {
-            e.preventDefault()
-            const username = $('#register-username').value
-            const password = $('#register-password').value
-            const confirmPassword = $('#register-confirm-password').value
-
-            if (password != confirmPassword) {
-                alert('Passwords do not match')
-                return
-            }
-
-            fetch('/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            })
-                .then(res => {
-                    console.log(res)
-                    if (res.ok) {
-                        registerSpan.innerText = 'Usuario registrado. ..Entrando..'
-                        registerSpan.style.color = 'green'
-                        setTimeout(() => {
-                            window.location.href = '/protected'
-                        }, 2000)
-                    } else {
-                        registerSpan.innerText = 'Error al registrar usuari'
-                        registerSpan.style.color = 'red'
-                    }
-                })
-        });
-
-        logoutButton?.addEventListener('click', e => {
-            e.preventDefault()
-            fetch('/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(res => {
-                    console.log(res)
-                    window.location.href = '/'
-                })
-        });
-    </script>
-</body>
-
+  </body>
 </html>

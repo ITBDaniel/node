@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar reserva</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <h1>Editar reserva</h1>
+        <a href="/bookings">Tornar</a>
+      </header>
+
+      <main class="card">
+        <form action="/bookings/<%= booking._id %>?_method=PUT" method="POST">
+          <label for="productId">Producte</label>
+          <select id="productId" name="productId" required>
+            <% products.forEach((product) => { %>
+              <option value="<%= product._id %>" <%= product._id === booking.productId ? 'selected' : '' %>><%= product.name %></option>
+            <% }) %>
+          </select>
+
+          <label for="bookingDate">Data</label>
+          <input id="bookingDate" name="bookingDate" type="date" value="<%= booking.bookingDate %>" required />
+
+          <label for="startTime">Hora d'inici</label>
+          <input id="startTime" name="startTime" type="time" value="<%= booking.startTime %>" required />
+
+          <label for="endTime">Hora de fi</label>
+          <input id="endTime" name="endTime" type="time" value="<%= booking.endTime %>" required />
+
+          <label for="status">Estat</label>
+          <select id="status" name="status">
+            <option value="confirmed" <%= booking.status === 'confirmed' ? 'selected' : '' %>>Confirmada</option>
+            <option value="pending" <%= booking.status === 'pending' ? 'selected' : '' %>>Pendent</option>
+            <option value="cancelled" <%= booking.status === 'cancelled' ? 'selected' : '' %>>Cancel·lada</option>
+          </select>
+
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" rows="3"><%= booking.notes %></textarea>
+
+          <button type="submit">Guardar canvis</button>
+        </form>
+      </main>
+    </div>
+  </body>
+</html>

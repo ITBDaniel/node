@@ -1,11 +1,18 @@
+// Servidor principal de la aplicación
 import express from 'express';
 import methodOverride from 'method-override';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import { UserRepository } from './user-repository.js';
+import { BookingRepository } from './booking-repository.js';
 import { PORT, SECRET_JWT_KEY } from './config.js';
+import productRoutes from './routes/products.js';
+import bookingRoutes from './routes/bookings.js';
+import { authRequired, loadSession, wantsJson } from './middleware/auth.js';
 
-const app = express();
+export const app = express();
+
+// Middlewares y configuración global
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -15,87 +22,168 @@ app.use(methodOverride('_method'));
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
+app.use(loadSession);
 
+app.get('/login', (req, res) => {
+    if (req.session.user) return res.redirect('/protected');
+    res.render('login');
+});
 
-app.use((req,res,next)=>{
-    const token =req.cookies.access_token
-    req.session={user: null}
-    try{
-        const data=jwt.verify(token,SECRET_JWT_KEY)
-        req.session.user=data
-    }catch(error){
-        req.session.user=null
-    }
-    next() // seguir a la siguiente ruta o middleware.
-})
+app.get('/register', (req, res) => {
+    if (req.session.user) return res.redirect('/protected');
+    res.render('register');
+});
 
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+    const username = String(req.body.username || '').trim();
+    const password = String(req.body.password || '');
 
     try {
-        const id = await UserRepository.create({ username, password });
-        setAuthCookie(res, username);
-        res.status(201).json({ id, username });
+        await UserRepository.create({ username, password });
+
+        if (!wantsJson(req)) {
+            return res.redirect('/login');
+        }
+
+        return res.status(201).json({ success: true, message: 'User created successfully.' });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        if (!wantsJson(req)) {
+            return res.status(400).render('register', { error: error.message });
+        }
+        return res.status(400).json({ error: error.message });
     }
 });
 
-app.post('/login', async (req,res)=>{
-    try{
-        const {username,password}=req.body
-        console.log("llego aqui")
-        const user = await UserRepository.login({username,password})
-        console.log("llego aqui 1")
+app.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const user = await UserRepository.login({ username, password });
+
         const token = jwt.sign(
-            {id: user._id, username: user.username},
-            SECRET_JWT_KEY, 
-            {
-            expiresIn:'1h'
-            })
-            console.log("llego aqui 2")
-        res
-        .cookie('access_token',token,{
-            httpOnly:true, //la cookie solo se puede acceder en el servidor, no podrem fer un document.cookie
-            //secure:true, //la cookie solo funciona en https
-            secure: process.env.NODE_ENV==='production',
-            sameSite:'strict', //la cookie es pot accedir dins del domini
-            maxAge:1000*60*60 //la cookie te un temps de validesa d'una hora
-        })
-        .send({ user,token })
-    }catch (error){
-        //401 = no autorització
-        res.status(401).send(error.message)
+            { id: user._id, username: user.username },
+            SECRET_JWT_KEY,
+            { expiresIn: '1h' }
+        );
+
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 1000 * 60 * 60
+        });
+
+        if (!wantsJson(req)) {
+            return res.redirect('/protected');
+        }
+
+        return res.json({ success: true, user: { id: user._id, username: user.username }, token });
+    } catch (error) {
+        if (!wantsJson(req)) {
+            return res.status(401).render('login', { error: error.message });
+        }
+        return res.status(401).json({ error: error.message });
     }
 });
 
-app.post('/logout',(req,res)=>{
-    res
-    .clearCookie('access_token')
-    .json({message:'logout successfull'})
-    .send('logout');
+app.post('/logout', (req, res) => {
+    res.clearCookie('access_token');
+    if (!wantsJson(req)) {
+        return res.redirect('/login');
+    }
+    return res.json({ success: true });
 });
 
-app.get('/protected', (req, res) => {
-    const user = req.session.user;
-    if (user) {
-        return res.render('register', { username: user.username });
-    }
-    res.status(403).send("No estas autorizado")
+app.get('/protected', authRequired, async (req, res) => {
+    const bookings = await BookingRepository.list();
+    const userBookings = bookings.filter((booking) => booking.userId === req.session.user.id);
+    res.render('protected', { user: req.session.user, userBookings });
 });
+
+app.get('/profile', authRequired, async (req, res) => {
+    const bookings = await BookingRepository.list();
+    res.render('profile', {
+        user: req.session.user,
+        bookings: bookings.filter((booking) => booking.userId === req.session.user.id)
+    });
+});
+
+app.get('/users', authRequired, async (req, res) => {
+    const users = await UserRepository.list();
+    if (!wantsJson(req)) {
+        return res.render('users', { users, user: req.session.user });
+    }
+    return res.json(users);
+});
+
+app.post('/users', authRequired, async (req, res) => {
+    try {
+        const userId = await UserRepository.create({
+            username: req.body.username,
+            password: req.body.password
+        });
+
+        if (!wantsJson(req)) {
+            return res.redirect('/users');
+        }
+
+        return res.status(201).json({ success: true, id: userId });
+    } catch (error) {
+        if (!wantsJson(req)) {
+            return res.status(400).render('users', { error: error.message, user: req.session.user, users: await UserRepository.list() });
+        }
+        return res.status(400).json({ error: error.message });
+    }
+});
+
+app.put('/users/:id', authRequired, async (req, res) => {
+    try {
+        const user = await UserRepository.update(req.params.id, {
+            username: req.body.username,
+            password: req.body.password
+        });
+
+        if (!wantsJson(req)) {
+            return res.redirect('/users');
+        }
+
+        return res.json({ success: true, user });
+    } catch (error) {
+        if (!wantsJson(req)) {
+            return res.status(400).send(error.message);
+        }
+        return res.status(400).json({ error: error.message });
+    }
+});
+
+app.delete('/users/:id', authRequired, async (req, res) => {
+    try {
+        await UserRepository.remove(req.params.id);
+        if (!wantsJson(req)) {
+            return res.redirect('/users');
+        }
+        return res.json({ success: true });
+    } catch (error) {
+        if (!wantsJson(req)) {
+            return res.status(400).send(error.message);
+        }
+        return res.status(400).json({ error: error.message });
+    }
+});
+
+app.use('/products', authRequired, productRoutes);
+app.use('/api/products', authRequired, productRoutes);
+app.use('/bookings', authRequired, bookingRoutes);
+app.use('/api/bookings', authRequired, bookingRoutes);
 
 app.get('/', (req, res) => {
-    const user = req.session.user;
-    console.log('ROOT_ROUTE', user);
-
-    if (user) {
-        return res.render('register', { username: user.username });
+    if (req.session.user) {
+        return res.redirect('/protected');
     }
-
-    res.render('register', {});
+    res.redirect('/login');
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
-
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}

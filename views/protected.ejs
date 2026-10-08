@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Àrea protegida</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <h1>Benvingut/da, <%= user.username %></h1>
+        <form action="/logout" method="POST">
+          <button type="submit">Tancar sessió</button>
+        </form>
+      </header>
+
+      <nav class="nav-menu">
+        <a href="/profile">Perfil</a>
+        <a href="/products">Productes</a>
+        <a href="/bookings">Reserves</a>
+        <a href="/users">Usuaris</a>
+      </nav>
+
+      <main class="card">
+        <h2>Panell principal</h2>
+        <p>Accés autoritzat amb JWT. El teu token caduca en 1 hora.</p>
+
+        <% if (userBookings && userBookings.length) { %>
+          <div class="list-block">
+            <h3>Les meves reserves</h3>
+            <ul>
+              <% userBookings.forEach((booking) => { %>
+                <li><strong><%= booking.bookingDate %></strong> - <%= booking.startTime %> a <%= booking.endTime %> - Estat: <%= booking.status %></li>
+              <% }) %>
+            </ul>
+          </div>
+        <% } else { %>
+          <p>No tens reserves encara.</p>
+        <% } %>
+      </main>
+    </div>
+  </body>
+</html>

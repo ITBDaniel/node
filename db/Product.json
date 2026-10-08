@@ -1,0 +1,29 @@
+[
+  {
+    "_id": "88fcecf6-98dd-49c6-ad6a-98e391fc890a",
+    "name": "Node.js Essentials 1791467108477",
+    "category": "Books",
+    "price": 24.5,
+    "stock": 5,
+    "description": "Learning guide",
+    "createdAt": "2026-10-08T13:45:08.690Z"
+  },
+  {
+    "_id": "6241c710-b3d4-4d82-8cd7-aaaa9b8018b9",
+    "name": "Mando ps4",
+    "category": "Tecnologia",
+    "price": 30,
+    "stock": 80,
+    "description": "Mando original de la consola ps4",
+    "createdAt": "2026-10-08T13:39:38.914Z"
+  },
+  {
+    "_id": "e10fe330-3646-467c-8c90-d9a15b273005",
+    "name": "Node.js Essentials",
+    "category": "Books",
+    "price": 24.5,
+    "stock": 5,
+    "description": "Learning guide",
+    "createdAt": "2026-10-08T13:36:36.808Z"
+  }
+]
